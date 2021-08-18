@@ -1,0 +1,82 @@
+*, *:before, *:after{
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #f1eaa8;
+    font-size: 14px;
+}
+
+.messageBox{
+    background-color: white;
+
+    height: fit-content;
+
+    width: fit-content;
+    max-width: 60%;
+
+    position: relative;
+    border-radius: 10px;
+    margin: 8px;
+    padding: 8px;
+}
+.left{
+    float: left;
+}
+
+.right{
+    float: right;
+}
+
+.messageAnim-appear{
+    height: 0;
+    width: 0;
+    padding: 0;
+    color: transparent;
+}
+
+.messageAnim-appear-active{
+    padding: 8px;
+    transition: width 0.3s linear, height 0.3s linear, padding 0.3s linear, margin-bottom 0.3s linear;
+}
+
+
+.svgholder{
+    position: absolute;
+    top: 100%;
+    width: 10px;
+}
+
+.messageBox .left{
+    left: 5%;
+}
+
+.messageBox .right{
+    right: 5%;
+}
+
+#chatBox{
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#messageInput{
+    border-radius: 30px;
+    padding: 8px;
+    width: 80%;
+}
+
+#messageInput:focus{
+    outline: none;
+}
+
+#sendMessageButton{
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    padding: 8px;
+}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Chatbot</title>
+
+        <link rel="stylesheet" href="../static/stylesheets/style.css">
+
+        <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react-transition-group/4.3.0/react-transition-group.min.js"></script>
+    </head>
+    <body>
+        <div style="min-width: 200px; width: 30vw; margin-left: auto; margin-right: auto; height: 95vh; min-height: 300px; border: 1px solid black; display: flex; flex-direction: column; overflow-x: hidden; overflow-y: hidden;">
+            <div style="width: 100%; height: 70px; background-color: lightblue; display: flex; justify-content: space-between; align-items: center; padding: 8px;" id="chatTop">
+                <div style="height: 50px; width: 50px; border-radius: 50%; background-color: white;"></div>
+                <span id="thinking" style="display: none;">thinking...</span> 
+            </div>
+            <div id="holder" style="width: 100%; flex-grow: 1; flex-basis: auto; flex-shrink: 1; overflow-y: hidden;"></div>
+            <div style="height: 60px; width: 100%; background-color: lightgray; padding: 10px; display: flex; justify-content: space-between;">
+                <input type="text" id="messageInput"/>
+                <div id="sendMessageButton"><img src="../static/assets/send.png" width="100%"/></div>
+            </div>
+        </div>
+    </body>
+    <script type="text/babel" src="../static/javascripts/messaging.js"></script>
+    <script type="text/babel">
+        var sche = false
+        document.getElementById("sendMessageButton").addEventListener("click", function(){
+            let mssg = document.getElementById("messageInput").value;
+            let additional_info = {}
+            if(sche){
+                let mssgs = mssg.split(' ')
+                console.log(mssgs)
+                additional_info.name = mssgs[0] + " " + mssgs[1]
+                mssgs[3] = mssgs[3].replaceAll("/", "-");
+                additional_info.date = mssgs[3]
+                additional_info.time = mssgs[5]
+            }
+
+            chatMessages.push({message:mssg, sender:0});
+            ReactDOM.render(<ChatBox messages={chatMessages}/>, document.getElementById("holder"));
+            document.getElementById("messageInput").value = "";
+            let req = new XMLHttpRequest();
+            req.open('POST', "/sendMessage", true);
+            req.setRequestHeader("Content-Type", "application/json");
+
+            req.addEventListener("load", function(){
+                sche = false;
+                if(this.status == 201) sche = true;
+                window.setTimeout(()=>{
+                    chatMessages.push({message:this.responseText, sender:1});
+                    ReactDOM.render(<ChatBox messages={chatMessages}/>, document.getElementById("holder"));
+                    document.getElementById("thinking").style.display = "none";  
+                }, 500)
+                          
+            })
+
+            req.send(JSON.stringify({message:mssg, schedule: sche, ...additional_info}))
+            
+            document.getElementById("thinking").style.display = "inline";            
+            
+        })
+    </script>
+</html>
